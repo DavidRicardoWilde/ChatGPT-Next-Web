@@ -47,6 +47,8 @@ import Locale, {
   ALL_LANG_OPTIONS,
   changeLang,
   getLang,
+  getOpenAPIKeys,
+  changeKey,
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
@@ -70,6 +72,10 @@ import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
+
+function getKeyName(): string {
+  return "default";
+}
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -599,6 +605,7 @@ export function Settings() {
     subscription: updateStore.subscription,
   };
   const [loadingUsage, setLoadingUsage] = useState(false);
+
   function checkUsage(force = false) {
     if (shouldHideBalanceQuery) {
       return;
@@ -644,6 +651,15 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
+  // const showApiKeysControl = enabledAccessControl && !clientConfig?.isApp;
+
+  const apiKeysMap: Map<string, string> = JSON.parse(
+    process.env.OPENAI_API_KEY_POOL_MAP != null
+      ? process.env.OPENAI_API_KEY_POOL_MAP
+      : '{"dd":"dd"}',
+  );
+  const apiKeyOptions = Object.keys(apiKeysMap);
+  const [selectedApiKey, setSelectedApiKey] = useState(apiKeyOptions[0]);
 
   return (
     <ErrorBoundary>
@@ -690,6 +706,19 @@ export function Settings() {
                 <Avatar avatar={config.avatar} />
               </div>
             </Popover>
+          </ListItem>
+
+          <ListItem title={Locale.Settings.Access.OpenAI.ApiKeySelection.Title}>
+            <Select
+              value={selectedApiKey}
+              onChange={(e) => setSelectedApiKey(e.target.value)}
+            >
+              {apiKeyOptions.map((key) => (
+                <option value={key} key={key}>
+                  {key}
+                </option>
+              ))}
+            </Select>
           </ListItem>
 
           <ListItem

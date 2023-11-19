@@ -290,6 +290,11 @@ const cn = {
           Placeholder: "OpenAI API Key",
         },
 
+        ApiKeySelection: {
+          Title: "Select your OpenAI API Key",
+          SubTitle: "选择你的 OpenAI API 密钥",
+        },
+
         Endpoint: {
           Title: "接口地址",
           SubTitle: "除默认地址外，必须包含 http(s)://",
@@ -441,9 +446,9 @@ const cn = {
     Config: "配置",
   },
   Exporter: {
-    Description : {
-      Title: "只有清除上下文之后的消息会被展示"
-    },  
+    Description: {
+      Title: "只有清除上下文之后的消息会被展示",
+    },
     Model: "模型",
     Messages: "消息",
     Topic: "主题",
