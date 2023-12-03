@@ -10,6 +10,11 @@ export const getBuildConfig = () => {
   const buildMode = process.env.BUILD_MODE ?? "standalone";
   const isApp = !!process.env.BUILD_APP;
   const version = "v" + tauriConfig.package.version;
+  const openaiApiKeyMap: Map<string, string> = JSON.parse(
+    process.env.OPENAI_API_KEY_POOL_MAP != null
+      ? process.env.OPENAI_API_KEY_POOL_MAP
+      : "{}",
+  );
 
   const commitInfo = (() => {
     try {
@@ -38,6 +43,7 @@ export const getBuildConfig = () => {
     ...commitInfo,
     buildMode,
     isApp,
+    openaiApiKeyMap,
   };
 };
 

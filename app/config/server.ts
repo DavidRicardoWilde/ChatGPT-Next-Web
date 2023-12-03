@@ -70,10 +70,17 @@ export const getServerSideConfig = () => {
     `[Server Config] using ${randomIndex + 1} of ${apiKeys.length} api key`,
   );
 
+  // const apiKeyMap: Map<string, string> =
+  //   process.env.OPENAI_API_KEY_POOL_MAP != null
+  //     ? JSON.parse(process.env.OPENAI_API_KEY_POOL_MAP)
+  //     : {};
+  // console.log(`[Server Config] API Key Map is ${JSON.stringify(apiKeyMap)}`);
+
   return {
     baseUrl: process.env.BASE_URL,
     apiKey,
     openaiOrgId: process.env.OPENAI_ORG_ID,
+    // apiKeyMap,
 
     isAzure,
     azureUrl: process.env.AZURE_URL,
