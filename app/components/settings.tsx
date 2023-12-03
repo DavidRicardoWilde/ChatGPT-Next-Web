@@ -47,8 +47,6 @@ import Locale, {
   ALL_LANG_OPTIONS,
   changeLang,
   getLang,
-  getOpenAPIKeys,
-  changeKey,
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
@@ -72,10 +70,7 @@ import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
-
-function getKeyName(): string {
-  return "default";
-}
+// import { getServerSideConfig } from "@/app/config/server";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -642,7 +637,8 @@ export function Settings() {
         navigate(Path.Home);
       }
     };
-    if (clientConfig?.isApp) { // Force to set custom endpoint to true if it's app
+    if (clientConfig?.isApp) {
+      // Force to set custom endpoint to true if it's app
       accessStore.update((state) => {
         state.useCustomConfig = true;
       });
@@ -656,15 +652,8 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
-  // const showApiKeysControl = enabledAccessControl && !clientConfig?.isApp;
 
-  const apiKeysMap: Map<string, string> = JSON.parse(
-    process.env.OPENAI_API_KEY_POOL_MAP != null
-      ? process.env.OPENAI_API_KEY_POOL_MAP
-      : '{"dd":"dd"}',
-  );
-  const apiKeyOptions = Object.keys(apiKeysMap);
-  const [selectedApiKey, setSelectedApiKey] = useState(apiKeyOptions[0]);
+  const apiKeyOptions: string[] = clientConfig!.openaiApiKeyOpts;
 
   return (
     <ErrorBoundary>
@@ -713,27 +702,14 @@ export function Settings() {
             </Popover>
           </ListItem>
 
-          <ListItem title={Locale.Settings.Access.OpenAI.ApiKeySelection.Title}>
-            <Select
-              value={selectedApiKey}
-              onChange={(e) => setSelectedApiKey(e.target.value)}
-            >
-              {apiKeyOptions.map((key) => (
-                <option value={key} key={key}>
-                  {key}
-                </option>
-              ))}
-            </Select>
-          </ListItem>
-
           <ListItem
             title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
             subTitle={
               checkingUpdate
                 ? Locale.Settings.Update.IsChecking
                 : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
+                  ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+                  : Locale.Settings.Update.IsLatest
             }
           >
             {checkingUpdate ? (
@@ -938,6 +914,29 @@ export function Settings() {
                   );
                 }}
               />
+            </ListItem>
+          )}
+
+          {showAccessCode && (
+            <ListItem
+              title={Locale.Settings.Access.OpenAI.ApiKeySelection.Title}
+              subTitle={Locale.Settings.Access.OpenAI.ApiKeySelection.SubTitle}
+            >
+              <Select
+                value={accessStore.selectedOpenaiApiKey}
+                onChange={(e) => {
+                  accessStore.update(
+                    (access) =>
+                      (access.selectedOpenaiApiKey = e.target.value as string),
+                  );
+                }}
+              >
+                {apiKeyOptions.map((key) => (
+                  <option value={key} key={key}>
+                    {key}
+                  </option>
+                ))}
+              </Select>
             </ListItem>
           )}
 

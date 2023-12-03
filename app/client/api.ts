@@ -147,7 +147,10 @@ export function getHeaders() {
     validString(accessStore.accessCode)
   ) {
     headers[authHeader] = makeBearer(
-      ACCESS_CODE_PREFIX + accessStore.accessCode,
+      ACCESS_CODE_PREFIX +
+        accessStore.accessCode +
+        "," +
+        accessStore.selectedOpenaiApiKey,
     );
   }
 

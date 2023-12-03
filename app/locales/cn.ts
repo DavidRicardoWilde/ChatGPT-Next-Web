@@ -291,7 +291,7 @@ const cn = {
         },
 
         ApiKeySelection: {
-          Title: "Select your OpenAI API Key",
+          Title: "选择你的 OpenAI API 密钥",
           SubTitle: "选择你的 OpenAI API 密钥",
         },
 

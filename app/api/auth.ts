@@ -17,9 +17,13 @@ function getIP(req: NextRequest) {
 function parseApiKey(bearToken: string) {
   const token = bearToken.trim().replaceAll("Bearer ", "").trim();
   const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
+  const accessArray = isOpenAiKey
+    ? ""
+    : token.slice(ACCESS_CODE_PREFIX.length).split(",");
 
   return {
-    accessCode: isOpenAiKey ? "" : token.slice(ACCESS_CODE_PREFIX.length),
+    accessCode: isOpenAiKey ? "" : accessArray[0],
+    selectedOpenaiApiKey: isOpenAiKey ? "" : accessArray[1],
     apiKey: isOpenAiKey ? token : "",
   };
 }
@@ -28,7 +32,7 @@ export function auth(req: NextRequest) {
   const authToken = req.headers.get("Authorization") ?? "";
 
   // check if it is openai api key or user token
-  const { accessCode, apiKey } = parseApiKey(authToken);
+  const { accessCode, selectedOpenaiApiKey, apiKey } = parseApiKey(authToken);
 
   const hashedCode = md5.hash(accessCode ?? "").trim();
 
@@ -57,7 +61,7 @@ export function auth(req: NextRequest) {
   if (!apiKey) {
     const serverApiKey = serverConfig.isAzure
       ? serverConfig.azureApiKey
-      : serverConfig.apiKey;
+      : serverConfig.openaiApiKeyMap.get(selectedOpenaiApiKey);
 
     if (serverApiKey) {
       console.log("[Auth] use system api key");
