@@ -652,9 +652,7 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
-  // const serverConfig = useMemo(() => getServerSideConfig(), []);
 
-  // const apiKeyOptions = Object.keys(serverConfig!.apiKeyMap);
   const apiKeyOptions: string[] = Object.keys(clientConfig!.openaiApiKeyMap);
   const [selectedApiKey, setSelectedApiKey] = useState(apiKeyOptions[0]);
 
@@ -927,7 +925,11 @@ export function Settings() {
             >
               <Select
                 value={selectedApiKey}
-                onChange={(e) => setSelectedApiKey(e.target.value)}
+                onChange={(e) => {
+                  accessStore.update(
+                    (access) => (access.openaiApiKeyOpt = e.target.value),
+                  );
+                }}
               >
                 {apiKeyOptions.map((key) => (
                   <option value={key} key={key}>

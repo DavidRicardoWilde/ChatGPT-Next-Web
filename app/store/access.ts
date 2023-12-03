@@ -23,6 +23,8 @@ const DEFAULT_ACCESS_STATE = {
   // openai
   openaiUrl: DEFAULT_OPENAI_URL,
   openaiApiKey: "",
+  openaiApiKeyOpt: "",
+  openaiApiKeyMap: getClientConfig()?.openaiApiKeyMap,
 
   // azure
   azureUrl: "",
