@@ -924,10 +924,15 @@ export function Settings() {
               subTitle={Locale.Settings.Access.OpenAI.ApiKeySelection.SubTitle}
             >
               <Select
-                value={selectedApiKey}
+                value={accessStore.apiKey}
                 onChange={(e) => {
                   accessStore.update(
-                    (access) => (access.openaiApiKeyOpt = e.target.value),
+                    (access) =>
+                      (access.openaiApiKey =
+                        access.openaiApiKeyMap[e.target.value]),
+                  );
+                  accessStore.update(
+                    (access) => (access.apiKey = e.target.value),
                   );
                 }}
               >

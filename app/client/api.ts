@@ -135,11 +135,7 @@ export function getHeaders() {
   const isAzure = accessStore.provider === ServiceProvider.Azure;
   const authHeader = isAzure ? "api-key" : "Authorization";
   let apiKey = isAzure ? accessStore.azureApiKey : accessStore.openaiApiKey;
-  const pool = accessStore.openaiApiKeyMap;
-  console.log("pool: ", pool);
-  console.log("typeof ", typeof accessStore.openaiApiKeyMap);
-  let value = accessStore.openaiApiKeyMap["default"];
-  console.log("value: ", value);
+  console.log("apiKey: ", apiKey);
 
   const makeBearer = (s: string) => `${isAzure ? "" : "Bearer "}${s.trim()}`;
   const validString = (x: string) => x && x.length > 0;
