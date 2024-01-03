@@ -74,10 +74,10 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
         : serverConfig.apiKey;
 
     if (serverApiKey && modelProvider != ModelProvider.GeminiPro) {
-      console.log("[Auth] use system api key OpenAI");
+      console.log("[Auth] use system api key ", modelProvider);
       req.headers.set("Authorization", `Bearer ${serverApiKey}`);
     } else if (systemApiKey) {
-      console.log("[Auth] use system api key Google");
+      console.log("[Auth] use system api key ", modelProvider);
       req.headers.set("Authorization", `Bearer ${systemApiKey}`);
     } else {
       console.log("[Auth] admin did not provide an api key");
