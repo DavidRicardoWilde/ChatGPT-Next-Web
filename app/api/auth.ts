@@ -70,8 +70,8 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
       modelProvider === ModelProvider.GeminiPro
         ? serverConfig.googleApiKey
         : serverConfig.isAzure
-        ? serverConfig.azureApiKey
-        : serverConfig.apiKey;
+          ? serverConfig.azureApiKey
+          : serverConfig.apiKey;
 
     if (serverApiKey && modelProvider != ModelProvider.GeminiPro) {
       console.log("[Auth] use system api key ", modelProvider);
