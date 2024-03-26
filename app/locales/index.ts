@@ -103,6 +103,10 @@ function getLanguage() {
   }
 }
 
+// export function getKeyName(): string {
+//   return "default"!
+// }
+
 export function getLang(): Lang {
   const savedLang = getItem(LANG_KEY);
 

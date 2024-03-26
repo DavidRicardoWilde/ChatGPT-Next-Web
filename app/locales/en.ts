@@ -294,6 +294,11 @@ const en: LocaleType = {
           Placeholder: "sk-xxx",
         },
 
+        ApiKeySelection: {
+          Title: "Select your OpenAI API Key",
+          SubTitle: "选择你的 OpenAI API 密钥",
+        },
+
         Endpoint: {
           Title: "OpenAI Endpoint",
           SubTitle: "Must starts with http(s):// or use /api/openai as default",

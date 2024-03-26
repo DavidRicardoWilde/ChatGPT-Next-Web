@@ -71,6 +71,7 @@ import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { useMaskStore } from "../store/mask";
 import { ProviderType } from "../utils/cloud";
+// import { getServerSideConfig } from "@/app/config/server";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -601,6 +602,7 @@ export function Settings() {
     subscription: updateStore.subscription,
   };
   const [loadingUsage, setLoadingUsage] = useState(false);
+
   function checkUsage(force = false) {
     if (shouldHideBalanceQuery) {
       return;
@@ -652,6 +654,8 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
+
+  const apiKeyOptions: string[] = clientConfig!.openaiApiKeyOpts;
 
   return (
     <ErrorBoundary>
@@ -708,8 +712,8 @@ export function Settings() {
               checkingUpdate
                 ? Locale.Settings.Update.IsChecking
                 : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
+                  ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
+                  : Locale.Settings.Update.IsLatest
             }
           >
             {checkingUpdate ? (
@@ -914,6 +918,29 @@ export function Settings() {
                   );
                 }}
               />
+            </ListItem>
+          )}
+
+          {showAccessCode && (
+            <ListItem
+              title={Locale.Settings.Access.OpenAI.ApiKeySelection.Title}
+              subTitle={Locale.Settings.Access.OpenAI.ApiKeySelection.SubTitle}
+            >
+              <Select
+                value={accessStore.selectedOpenaiApiKey}
+                onChange={(e) => {
+                  accessStore.update(
+                    (access) =>
+                      (access.selectedOpenaiApiKey = e.target.value as string),
+                  );
+                }}
+              >
+                {apiKeyOptions.map((key) => (
+                  <option value={key} key={key}>
+                    {key}
+                  </option>
+                ))}
+              </Select>
             </ListItem>
           )}
 

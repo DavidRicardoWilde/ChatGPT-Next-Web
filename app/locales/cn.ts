@@ -291,6 +291,11 @@ const cn = {
           Placeholder: "OpenAI API Key",
         },
 
+        ApiKeySelection: {
+          Title: "选择你的 OpenAI API 密钥",
+          SubTitle: "选择你的 OpenAI API 密钥",
+        },
+
         Endpoint: {
           Title: "接口地址",
           SubTitle: "除默认地址外，必须包含 http(s)://",

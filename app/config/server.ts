@@ -78,10 +78,15 @@ export const getServerSideConfig = () => {
     `[Server Config] using ${randomIndex + 1} of ${apiKeys.length} api key`,
   );
 
+  const openaiApiKeyMap: Map<string, string> = new Map(
+    Object.entries(JSON.parse(process.env.OPENAI_API_KEY_POOL_MAP || "{}")),
+  );
+
   return {
     baseUrl: process.env.BASE_URL,
     apiKey,
     openaiOrgId: process.env.OPENAI_ORG_ID,
+    openaiApiKeyMap,
 
     isAzure,
     azureUrl: process.env.AZURE_URL,

@@ -16,11 +16,17 @@ function getIP(req: NextRequest) {
 
 function parseApiKey(bearToken: string) {
   const token = bearToken.trim().replaceAll("Bearer ", "").trim();
-  const isApiKey = !token.startsWith(ACCESS_CODE_PREFIX);
+  const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
+  const accessArray = isOpenAiKey
+    ? []
+    : token.slice(ACCESS_CODE_PREFIX.length).split(",");
+
+  console.log("[Auth] accessArray: ", accessArray);
 
   return {
-    accessCode: isApiKey ? "" : token.slice(ACCESS_CODE_PREFIX.length),
-    apiKey: isApiKey ? token : "",
+    accessCode: isOpenAiKey ? "" : accessArray[0],
+    selectedOpenaiApiKey: isOpenAiKey ? "" : accessArray[1],
+    apiKey: isOpenAiKey ? token : "",
   };
 }
 
@@ -28,7 +34,7 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
   const authToken = req.headers.get("Authorization") ?? "";
 
   // check if it is openai api key or user token
-  const { accessCode, apiKey } = parseApiKey(authToken);
+  const { accessCode, selectedOpenaiApiKey, apiKey } = parseApiKey(authToken);
 
   const hashedCode = md5.hash(accessCode ?? "").trim();
 
@@ -36,6 +42,7 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
   console.log("[Auth] allowed hashed codes: ", [...serverConfig.codes]);
   console.log("[Auth] got access code:", accessCode);
   console.log("[Auth] hashed access code:", hashedCode);
+  console.log("[Auth] selected openai api key:", selectedOpenaiApiKey);
   console.log("[User IP] ", getIP(req));
   console.log("[Time] ", new Date().toLocaleString());
 
@@ -55,16 +62,22 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
 
   // if user does not provide an api key, inject system api key
   if (!apiKey) {
-    const serverConfig = getServerSideConfig();
+    const serverApiKey = serverConfig.isAzure
+      ? serverConfig.azureApiKey
+      : serverConfig.openaiApiKeyMap.get(selectedOpenaiApiKey);
 
     const systemApiKey =
       modelProvider === ModelProvider.GeminiPro
         ? serverConfig.googleApiKey
         : serverConfig.isAzure
-        ? serverConfig.azureApiKey
-        : serverConfig.apiKey;
-    if (systemApiKey) {
-      console.log("[Auth] use system api key");
+          ? serverConfig.azureApiKey
+          : serverConfig.apiKey;
+
+    if (serverApiKey && modelProvider != ModelProvider.GeminiPro) {
+      console.log("[Auth] use system api key ", modelProvider);
+      req.headers.set("Authorization", `Bearer ${serverApiKey}`);
+    } else if (systemApiKey) {
+      console.log("[Auth] use system api key ", modelProvider);
       req.headers.set("Authorization", `Bearer ${systemApiKey}`);
     } else {
       console.log("[Auth] admin did not provide an api key");
