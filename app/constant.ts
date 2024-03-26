@@ -89,6 +89,7 @@ export const Azure = {
 export const Google = {
   ExampleEndpoint: "https://generativelanguage.googleapis.com/",
   ChatPath: "v1/models/gemini-pro:generateContent",
+  VisionChatPath: "v1beta/models/gemini-pro-vision:generateContent",
 
   // /api/openai/v1/chat/completions
 };
